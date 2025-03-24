@@ -21,7 +21,7 @@ ChartJS.register(
   Legend
 );
 
-import data from "../assets/20250228.txt";
+import data from "../../public/data/20240131.txt";
 const Dashboard = () => {
   const [text, setText] = useState("");
   const [textContent, setTextContent] = useState("");
