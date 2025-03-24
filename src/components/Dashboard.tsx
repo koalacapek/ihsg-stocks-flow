@@ -10,7 +10,7 @@ import {
 } from "chart.js";
 import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
-import { loadTextFile } from "../util";
+import { loadAndParseTextFileAndFilter } from "../util";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -21,16 +21,17 @@ ChartJS.register(
   Legend
 );
 
-import data from "../../public/data/20240131.txt";
+import data1 from "../../public/data/20240131.txt";
 const Dashboard = () => {
   const [text, setText] = useState("");
-  const [textContent, setTextContent] = useState("");
+  const [data, setData] = useState<any>({});
 
   useEffect(() => {
     // Load the text file from the public folder
-    loadTextFile(data)
+    loadAndParseTextFileAndFilter(data1, "AALI")
       .then((content) => {
-        setTextContent(content);
+        setData(content);
+        console.log(content);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -69,18 +70,6 @@ const Dashboard = () => {
         position: "bottom" as const,
       },
     },
-    // scales: {
-    //   x: {
-    //     grid: {
-    //       display: false, // Remove vertical grid lines
-    //     },
-    //   },
-    //   y: {
-    //     grid: {
-    //       display: false, // Remove horizontal grid lines
-    //     },
-    //   },
-    // },
   };
   return (
     <div className="w-full pl-10 h-fit ">
@@ -104,7 +93,6 @@ const Dashboard = () => {
           <Line options={options} data={lineChart} />
         </div>
       </div>
-      <div>{textContent}</div>
     </div>
   );
 };
