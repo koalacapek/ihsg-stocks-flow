@@ -24,7 +24,10 @@ const YearSelector = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="w-[120px] justify-between">
+        <Button
+          variant="outline"
+          className="w-[120px] p-4 justify-between font-semibold"
+        >
           {selectedYear === "" ? "Select year" : selectedYear}
           <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
         </Button>

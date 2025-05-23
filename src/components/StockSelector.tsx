@@ -39,7 +39,10 @@ const StockSelector = ({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className="w-[200px] justify-between">
+        <Button
+          variant="outline"
+          className="w-[200px] p-4 justify-between font-semibold"
+        >
           {selectedStocks.length > 0
             ? `${selectedStocks.length} stock${
                 selectedStocks.length > 1 ? "s" : ""
