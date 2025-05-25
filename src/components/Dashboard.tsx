@@ -7,10 +7,10 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
-import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
-import { loadAndParseTextFileAndFilter } from "../util";
+} from "chart.js"
+import { useEffect, useState } from "react"
+// import { Line } from "react-chartjs-2";
+// import { loadAndParseTextFileAndFilter } from "../util";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -19,18 +19,57 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend
-);
+)
 
-import data1 from "../../public/data/20240131.txt";
-import StockSelector from "./StockSelector";
-import YearSelector from "./YearSelector";
+// import data1 from "../../public/data/20240131.txt";
+import StockSelector from "./StockSelector"
+import YearSelector from "./YearSelector"
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+import { PieChart, TrendingDown, TrendingUp, Users } from "lucide-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
+import Overview from "./Overview"
 const Dashboard = () => {
   // Mock data
-  const availableStocks = ["BBCA", "BBRI", "BMRI"];
-  const [selectedStocks, setSelectedStocks] = useState<string[]>([]);
+  const availableStocks = ["BBCA", "BBRI", "BMRI"]
+  const [selectedStocks, setSelectedStocks] = useState<string[]>([])
 
-  const availableYears = ["2021", "2022", "2023", "2024", "2025"];
-  const [selectedYear, setSelectedYear] = useState<string>("");
+  const availableYears = ["2021", "2022", "2023", "2024", "2025"]
+  const [selectedYear, setSelectedYear] = useState<string>("")
+
+  const [summaryStats, setSummaryStats] = useState({
+    netFlow: 0,
+    buyVolume: 0,
+    sellVolume: 0,
+    foreignOwnership: 0,
+  })
+
+  const [chartData, setChartData] = useState<any[]>([])
+  const [filteredData, setFilteredData] = useState<any[]>([])
+
+  useEffect(() => {
+    setSummaryStats({
+      netFlow: 0,
+      buyVolume: 0,
+      sellVolume: 0,
+      foreignOwnership: 0,
+    })
+  }, [])
+
+  // const topPerformingStocks = [...availableStocks]
+  //   .map((stock) => {
+  //     const stockData = csvData.filter(
+  //       (item) =>
+  //         item.stock_code === stock &&
+  //         (selectedYear ? item.date.startsWith(selectedYear) : true)
+  //     )
+  //     const netFlow = stockData.reduce(
+  //       (sum, item) => sum + (item.net_flow || 0),
+  //       0
+  //     )
+  //     return { stock, netFlow }
+  //   })
+  //   .sort((a, b) => b.netFlow - a.netFlow)
+  //   .slice(0, 5)
 
   return (
     <div className="p-10">
@@ -51,80 +90,89 @@ const Dashboard = () => {
           />
         </div>
       </div>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 pt-5">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="font-medium">Net Foreign Flow</CardTitle>
+            <TrendingUp
+              className={`h-5 w-5 ${
+                summaryStats.netFlow >= 0 ? "text-green-500" : "text-red-500"
+              }`}
+            />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              Rp {(summaryStats.netFlow / 1000).toFixed(2)}T
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Based on selected data
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="font-medium">Foreign Buy Volume</CardTitle>
+            <Users className="h-5 w-5 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              Rp {(summaryStats.buyVolume / 1000).toFixed(2)}T
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total foreign purchases
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="font-medium">Foreign Sell Volume</CardTitle>
+            <TrendingDown className="h-5 w-5 text-red-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              Rp {(summaryStats.sellVolume / 1000).toFixed(2)}T
+            </div>
+            <p className="text-xs text-muted-foreground">Total foreign sales</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+            <CardTitle className="font-medium">Foreign Ownership</CardTitle>
+            <PieChart className="h-5 w-5 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {summaryStats.foreignOwnership.toFixed(1)}%
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Average across selected stocks
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Tabs defaultValue="overview" className="pt-6">
+        <TabsList className="grid grid-cols-2">
+          <TabsTrigger value="overview" className="hover:cursor-pointer">
+            Overview
+          </TabsTrigger>
+          <TabsTrigger value="comparison" className="hover:cursor-pointer">
+            Comparison
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview">
+          <Overview
+            selectedStocks={selectedStocks}
+            selectedYear={selectedYear}
+            chartData={chartData}
+            filteredData={filteredData}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
-  );
-  // const [text, setText] = useState("");
-  // const [data, setData] = useState<any>({});
+  )
+}
 
-  // useEffect(() => {
-  //   // Load the text file from the public folder
-  //   loadAndParseTextFileAndFilter(data1, "AALI")
-  //     .then((content) => {
-  //       setData(content);
-  //       console.log(content);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error);
-  //     });
-  // }, []);
-
-  // const lineChart = {
-  //   labels: [
-  //     "Monday",
-  //     "Tuesday",
-  //     "Wednesday",
-  //     "Thursday",
-  //     "Friday",
-  //     "Saturday",
-  //     "Sunday",
-  //   ],
-
-  //   datasets: [
-  //     {
-  //       label: "Local",
-  //       data: [1000, 8000, 5000, 3000, 10000, 9000, 1000],
-  //       borderColor: "green",
-  //     },
-  //     {
-  //       label: "Foreign",
-  //       data: [3000, 5000, 10000, 6000, 8000, 7000, 100],
-  //       borderColor: "red",
-  //     },
-  //   ],
-  // };
-  // const options = {
-  //   responsive: true,
-  //   plugins: {
-  //     legend: {
-  //       display: true,
-  //       position: "bottom" as const,
-  //     },
-  //   },
-  // };
-  // return (
-  //   <div className="w-full pl-10 h-fit ">
-  //     <div className="py-10 ">
-  //       <p className="text-3xl">Welcome!</p>
-  //       <p className="text-xl">Choose a stock to start</p>
-  //       <input
-  //         value={text}
-  //         type="text"
-  //         maxLength={4}
-  //         className="border rounded-md p-2 mt-3 hover:cursor-pointer"
-  //         placeholder="Type here..."
-  //         onChange={(e) => {
-  //           setText(e.target.value.toUpperCase());
-  //         }}
-  //       />
-  //     </div>
-  //     <div className="w-full flex">
-  //       <div className="w-2/4 bg-white p-5 rounded-md shadow-xl">
-  //         <p className="pb-5 font-semibold text-xl">Foreign Flow</p>
-  //         <Line options={options} data={lineChart} />
-  //       </div>
-  //     </div>
-  //   </div>
-  // );
-};
-
-export default Dashboard;
+export default Dashboard
