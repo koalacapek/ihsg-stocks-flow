@@ -29,7 +29,7 @@ const YearSelector = ({
           className="w-[120px] p-4 justify-between font-semibold"
         >
           {selectedYear === "" ? "Select year" : selectedYear}
-          <ChevronDown className="ml-2 h-4 w-4 opacity-50" />
+          <ChevronDown className="ml-1 h-4 w-4 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
