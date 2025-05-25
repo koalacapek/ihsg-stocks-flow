@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+*.env
+*.venv/
+venv/
+env/
+*.egg-info/
+.DS_Store
+
+# Django
+db.sqlite3
+/static/
+/media/
+
+# VSCode
+.vscode/
+
+# Mac / Linux / Windows
+Thumbs.db
+.DS_Store
+.idea/
+*.swp
+
+# Node/Frontend (if you have a frontend too)
+node_modules/
+dist/
+build/
+*.lock
