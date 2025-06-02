@@ -7,8 +7,8 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js"
-import { useEffect, useState } from "react"
+} from "chart.js";
+import { useEffect, useState } from "react";
 // import { Line } from "react-chartjs-2";
 // import { loadAndParseTextFileAndFilter } from "../util";
 ChartJS.register(
@@ -19,32 +19,32 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend
-)
+);
 
 // import data1 from "../../public/data/20240131.txt";
-import StockSelector from "./StockSelector"
-import YearSelector from "./YearSelector"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
-import { PieChart, TrendingDown, TrendingUp, Users } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
-import Overview from "./Overview"
+import StockSelector from "./StockSelector";
+import YearSelector from "./YearSelector";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { PieChart, TrendingDown, TrendingUp, Users } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import Overview from "./Overview";
 const Dashboard = () => {
   // Mock data
-  const availableStocks = ["BBCA", "BBRI", "BMRI"]
-  const [selectedStocks, setSelectedStocks] = useState<string[]>([])
+  const availableStocks = ["BBCA", "BBRI", "BMRI"];
+  const [selectedStocks, setSelectedStocks] = useState<string[]>([]);
 
-  const availableYears = ["2021", "2022", "2023", "2024", "2025"]
-  const [selectedYear, setSelectedYear] = useState<string>("")
+  const availableYears = ["2024", "2025"];
+  const [selectedYear, setSelectedYear] = useState<string>("");
 
   const [summaryStats, setSummaryStats] = useState({
     netFlow: 0,
     buyVolume: 0,
     sellVolume: 0,
     foreignOwnership: 0,
-  })
+  });
 
-  const [chartData, setChartData] = useState<any[]>([])
-  const [filteredData, setFilteredData] = useState<any[]>([])
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [filteredData, setFilteredData] = useState<any[]>([]);
 
   useEffect(() => {
     setSummaryStats({
@@ -52,8 +52,8 @@ const Dashboard = () => {
       buyVolume: 0,
       sellVolume: 0,
       foreignOwnership: 0,
-    })
-  }, [])
+    });
+  }, []);
 
   // const topPerformingStocks = [...availableStocks]
   //   .map((stock) => {
@@ -172,7 +172,7 @@ const Dashboard = () => {
         </TabsContent>
       </Tabs>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;
