@@ -11,6 +11,17 @@ def load_csvs_by_year(request, year):
     data = load_txt_files_by_year(CSV_DIR, year)
     return JsonResponse(data, safe=False)
 
+def get_stocks_code(request):
+    data = []
+    filename = os.listdir(CSV_DIR)[0]
+    filepath = os.path.join(CSV_DIR, filename)
+    with open(filepath, newline='', encoding='utf-8') as f:
+        reader = csv.DictReader(f, delimiter='|')
+        for row in reader:
+            data.append(row["Code"])
+    
+    return JsonResponse(data, safe=False)
+
 def get_total_net_flow(request, year, id):
     data = load_txt_files_by_year(CSV_DIR, year)
     code_upper = str(id).upper()
@@ -40,3 +51,5 @@ def get_total_net_flow(request, year, id):
         "total_local": total_local,
         "total_foreign": total_all
     })
+
+
