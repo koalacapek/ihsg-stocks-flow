@@ -9,6 +9,7 @@ import {
   Legend,
 } from "chart.js";
 import { useEffect, useState } from "react";
+import axios from "axios";
 // import { Line } from "react-chartjs-2";
 // import { loadAndParseTextFileAndFilter } from "../util";
 ChartJS.register(
@@ -28,9 +29,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { PieChart, TrendingDown, TrendingUp, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import Overview from "./Overview";
+import { api } from "@/utils/api";
+
 const Dashboard = () => {
   // Mock data
-  const availableStocks = ["BBCA", "BBRI", "BMRI"];
+  const [availableStocks, setAvailableStocks] = useState<string[]>([]);
   const [selectedStocks, setSelectedStocks] = useState<string[]>([]);
 
   const availableYears = ["2024", "2025"];
@@ -53,6 +56,16 @@ const Dashboard = () => {
       sellVolume: 0,
       foreignOwnership: 0,
     });
+  }, []);
+
+  useEffect(() => {
+    const fetchCodes = () => {
+      api.get("/stocks").then((res) => {
+        setAvailableStocks(res.data);
+      });
+    };
+
+    fetchCodes();
   }, []);
 
   // const topPerformingStocks = [...availableStocks]
