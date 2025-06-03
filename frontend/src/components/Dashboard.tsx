@@ -30,14 +30,18 @@ import { PieChart, TrendingDown, TrendingUp, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import Overview from "./Overview";
 import { api } from "@/utils/api";
+import { formatRupiah } from "@/utils/util";
 
 const Dashboard = () => {
   // Mock data
   const [availableStocks, setAvailableStocks] = useState<string[]>([]);
   const [selectedStocks, setSelectedStocks] = useState<string[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>("");
+
+  const [totalNet, setTotalNet] = useState<number>(0);
+  const [totalForeign, setTotalForeign] = useState<number>(0);
 
   const availableYears = ["2024", "2025"];
-  const [selectedYear, setSelectedYear] = useState<string>("");
 
   const [summaryStats, setSummaryStats] = useState({
     netFlow: 0,
@@ -58,6 +62,7 @@ const Dashboard = () => {
     });
   }, []);
 
+  // load all available stocks on mount
   useEffect(() => {
     const fetchCodes = () => {
       api.get("/stocks").then((res) => {
@@ -67,6 +72,46 @@ const Dashboard = () => {
 
     fetchCodes();
   }, []);
+
+  useEffect(() => {
+    console.log(selectedStocks);
+  }, [selectedStocks]);
+
+  // Load data of chosen stocks
+  useEffect(() => {
+    const fetchTotals = async () => {
+      if (selectedYear === "") return;
+      if (selectedStocks.length === 0) {
+        setTotalNet(0);
+        setTotalForeign(0);
+        return;
+      }
+
+      try {
+        const results = await Promise.all(
+          selectedStocks.map((stock) =>
+            api.get(`/total/${selectedYear}/${stock}`)
+          )
+        );
+        const total = results.reduce(
+          (acc, res) =>
+            acc + res.data["total_local"] + res.data["total_foreign"],
+          0
+        );
+
+        const totalForeign = results.reduce(
+          (acc, res) => acc + res.data["total_foreign"],
+          0
+        );
+        setTotalNet(total);
+        setTotalForeign(totalForeign);
+      } catch (err) {
+        console.error("Failed to fetch totals", err);
+      }
+    };
+
+    fetchTotals();
+  }, [selectedStocks, selectedYear]);
 
   // const topPerformingStocks = [...availableStocks]
   //   .map((stock) => {
@@ -107,17 +152,15 @@ const Dashboard = () => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 pt-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="font-medium">Net Foreign Flow</CardTitle>
+            <CardTitle className="font-medium">Net Flow</CardTitle>
             <TrendingUp
               className={`h-5 w-5 ${
-                summaryStats.netFlow >= 0 ? "text-green-500" : "text-red-500"
+                totalNet >= 0 ? "text-green-500" : "text-red-500"
               }`}
             />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              Rp {(summaryStats.netFlow / 1000).toFixed(2)}T
-            </div>
+            <div className="text-2xl font-bold">{formatRupiah(totalNet)}</div>
             <p className="text-xs text-muted-foreground">
               Based on selected data
             </p>
@@ -130,7 +173,7 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              Rp {(summaryStats.buyVolume / 1000).toFixed(2)}T
+              {formatRupiah(totalForeign)}
             </div>
             <p className="text-xs text-muted-foreground">
               Total foreign purchases
