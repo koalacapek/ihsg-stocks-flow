@@ -19,11 +19,24 @@ def get_total_net_flow(request, year, id):
         row for row in data if row.get("Code", "").upper() == code_upper
     ]
 
-    print(matching_rows)
-
 
     if not matching_rows:
         return JsonResponse({"error": f"No record found with id {id} in year {year}"}, status=404)
 
-    # If multiple rows with same id, return all
-    return JsonResponse(matching_rows, safe=False)
+    # In all matching rows, get the total of both local and foreign
+    total_local = 0
+    total_all = 0
+
+    for row in matching_rows:
+        try:
+            total_local += int(row.get("TotalLocal", "0").replace(",", ""))
+            total_all += int(row.get("Total", "0").replace(",", ""))
+        except ValueError:
+            continue  # skip rows with invalid data
+
+    return JsonResponse({
+        "code": code_upper,
+        "year": year,
+        "total_local": total_local,
+        "total_foreign": total_all
+    })
