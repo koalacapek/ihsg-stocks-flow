@@ -22,6 +22,23 @@ def get_stocks_code(request):
     
     return JsonResponse(data, safe=False)
 
+def get_yearly_data(request, year, id):
+    data = load_txt_files_by_year(CSV_DIR, year)
+    code_upper = str(id).upper()
+
+    matching_rows = [
+        {
+            "TotalLocal": row.get("TotalLocal", "0"),
+            "TotalForeign": row.get("Total", "0"),
+            "Date": row.get("Date")
+        }
+        for row in data
+        if row.get("Code", "").upper() == code_upper
+    ]
+
+    return JsonResponse(matching_rows, safe=False)
+
+
 def get_total_net_flow(request, year, id):
     data = load_txt_files_by_year(CSV_DIR, year)
     code_upper = str(id).upper()
