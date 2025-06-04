@@ -37,6 +37,7 @@ const Dashboard = () => {
   const [availableStocks, setAvailableStocks] = useState<string[]>([]);
   const [selectedStocks, setSelectedStocks] = useState<string[]>([]);
   const [selectedYear, setSelectedYear] = useState<string>("");
+  const [ownership, setOwnership] = useState<number>(0);
 
   const [totalNet, setTotalNet] = useState<number>(0);
   const [totalForeign, setTotalForeign] = useState<number>(0);
@@ -84,6 +85,7 @@ const Dashboard = () => {
       if (selectedStocks.length === 0) {
         setTotalNet(0);
         setTotalForeign(0);
+        setOwnership(0);
         return;
       }
 
@@ -103,8 +105,16 @@ const Dashboard = () => {
           (acc, res) => acc + res.data["total_foreign"],
           0
         );
+
+        const totalLocal = results.reduce(
+          (acc, res) => acc + res.data["total_local"],
+          0
+        );
         setTotalNet(total);
         setTotalForeign(totalForeign);
+
+        // Calculate ownership
+        setOwnership((totalForeign / (totalForeign + totalLocal)) * 100);
       } catch (err) {
         console.error("Failed to fetch totals", err);
       }
@@ -198,9 +208,7 @@ const Dashboard = () => {
             <PieChart className="h-5 w-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {summaryStats.foreignOwnership.toFixed(1)}%
-            </div>
+            <div className="text-2xl font-bold">{ownership.toFixed(1)}%</div>
             <p className="text-xs text-muted-foreground">
               Average across selected stocks
             </p>
