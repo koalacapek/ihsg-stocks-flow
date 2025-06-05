@@ -1,18 +1,27 @@
-import { ITrendProps } from "@/types"
-import { StockChart } from "../StockChart"
+import { ITrendProps } from "@/types";
+import { StockChart } from "../StockChart";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card"
+} from "../ui/card";
+import { useEffect, useState } from "react";
+import { aggregateDataForChart } from "@/utils/util";
 
 const TrendCard = ({
   selectedStocks,
   selectedYear,
   chartData,
 }: ITrendProps) => {
+  const [data, setData] = useState<any[]>([]); // Ideally type this properly
+
+  useEffect(() => {
+    const finalData = aggregateDataForChart(chartData, selectedStocks);
+    console.log(finalData);
+    setData(finalData);
+  }, [chartData, selectedStocks]); // ← include dependencies
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -23,7 +32,7 @@ const TrendCard = ({
       </CardHeader>
       <CardContent className="pl-2">
         {chartData.length > 0 ? (
-          <StockChart data={chartData} selectedStocks={selectedStocks} />
+          <StockChart data={data} selectedStocks={selectedStocks} />
         ) : (
           <div className="h-[300px] flex items-center justify-center text-muted-foreground">
             No data available for the selected criteria
@@ -31,7 +40,7 @@ const TrendCard = ({
         )}
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default TrendCard
+export default TrendCard;

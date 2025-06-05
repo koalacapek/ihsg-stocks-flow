@@ -1,3 +1,5 @@
+import { ChartData } from "@/types";
+import { formatRupiah } from "@/utils/util";
 import {
   Line,
   LineChart,
@@ -7,16 +9,15 @@ import {
   YAxis,
   CartesianGrid,
   Legend,
-} from "recharts"
+} from "recharts";
 
 interface StockChartProps {
-  data: any[]
-  selectedStocks: string[]
+  data: any[];
+  selectedStocks: string[];
 }
 
 export function StockChart({ data, selectedStocks }: StockChartProps) {
-  // Colors for different stocks
-  const colors = ["#2563eb", "#16a34a", "#dc2626", "#9333ea", "#ea580c"]
+  const colors = ["#2563eb", "#16a34a", "#dc2626", "#9333ea", "#ea580c"];
 
   return (
     <ResponsiveContainer width="100%" height={350}>
@@ -34,11 +35,11 @@ export function StockChart({ data, selectedStocks }: StockChartProps) {
           tickFormatter={(value) => {
             // Format date to show only month and day
             try {
-              const date = new Date(value)
-              return `${date.getMonth() + 1}/${date.getDate()}`
+              const date = new Date(value);
+              return `${date.getMonth() + 1}/${date.getDate()}`;
             } catch (e) {
-              console.error("Invalid date format:", e)
-              return value
+              console.error("Invalid date format:", e);
+              return value;
             }
           }}
         />
@@ -47,23 +48,24 @@ export function StockChart({ data, selectedStocks }: StockChartProps) {
           fontSize={12}
           tickLine={false}
           axisLine={false}
-          tickFormatter={(value) => `${value}B`}
+          tickFormatter={(value) => formatRupiah(value)}
+          domain={["auto", "auto"]}
         />
         <Tooltip
-          formatter={(value: number) => [`Rp ${value.toFixed(2)}B`, ""]}
+          formatter={(value: number) => formatRupiah(value)}
           labelFormatter={(label) => {
             // Format the full date for tooltip
             try {
-              const date = new Date(label)
+              const date = new Date(label);
               return date.toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "short",
                 day: "numeric",
-              })
+              });
             } catch (e) {
-              console.error("Invalid date format:", e)
+              console.error("Invalid date format:", e);
 
-              return label
+              return label;
             }
           }}
         />
@@ -82,5 +84,5 @@ export function StockChart({ data, selectedStocks }: StockChartProps) {
         ))}
       </LineChart>
     </ResponsiveContainer>
-  )
+  );
 }

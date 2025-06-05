@@ -1,14 +1,17 @@
-import { IStockChartProps } from "@/types"
-import TrendCard from "./Cards/TrendCard"
-import PerformanceCard from "./Cards/PerformanceCard"
-import OwnershipCard from "./Cards/OwnershipCard"
+import { ChartData, IStockChartProps } from "@/types";
+import TrendCard from "./Cards/TrendCard";
+import PerformanceCard from "./Cards/PerformanceCard";
+import OwnershipCard from "./Cards/OwnershipCard";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card"
+} from "./ui/card";
+import { useEffect, useState } from "react";
+import { api } from "@/utils/api";
+import { convertMonthAbbrToNumber } from "@/utils/util";
 
 const Overview = ({
   selectedStocks,
@@ -16,21 +19,67 @@ const Overview = ({
   chartData,
   filteredData,
 }: IStockChartProps) => {
+  const [data, setData] = useState<ChartData[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (selectedYear === "") return;
+
+      if (selectedStocks.length === 0) {
+        setData([]);
+        return;
+      }
+
+      try {
+        const results = await Promise.all(
+          selectedStocks.map((stock) =>
+            api.get(`/yearly/${selectedYear}/${stock}`).then((res) => ({
+              stock,
+              data: res.data, // assuming an array of entries per stock
+            }))
+          )
+        );
+
+        console.log(data);
+        const parsed = results.flatMap(({ stock, data }) =>
+          data.map((entry: any) => {
+            const month = entry.Date.split("-")[1];
+            const year = entry.Date.split("-")[2];
+            return {
+              stock,
+              month: `${year}-${convertMonthAbbrToNumber(month)}`,
+              totalLocal: entry.TotalLocal,
+              totalForeign: entry.TotalForeign,
+            };
+          })
+        );
+
+        console.log(parsed);
+
+        setData(parsed); // shape: [{ stock, month, totalLocal, totalForeign }, ...]
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [selectedStocks, selectedYear]);
+
   return (
     <div>
       <div className="grid gap-4 pt-4 md:grid-cols-7">
         <TrendCard
           selectedStocks={selectedStocks}
           selectedYear={selectedYear}
-          chartData={chartData}
+          chartData={data}
         />
-        <PerformanceCard
+        {/* <PerformanceCard
           selectedYear={selectedYear}
           topPerformingStocks={chartData.slice(0, 5).map((item) => ({
             stock: item.stock,
             netFlow: item.netFlow,
           }))}
-        />
+        /> */}
 
         {/* <h2 className="text-2xl font-bold">Overview</h2>
       <p className="text-gray-600">
@@ -65,20 +114,20 @@ const Overview = ({
                   // Calculate total buy and sell volumes for this stock
                   const stockData = filteredData.filter(
                     (item) => item.stock_code === stock
-                  )
+                  );
                   const totalBuy = stockData.reduce(
                     (sum, item) => sum + (item.buy_volume || 0),
                     0
-                  )
+                  );
                   const totalSell = stockData.reduce(
                     (sum, item) => sum + (item.sell_volume || 0),
                     0
-                  )
+                  );
 
                   // Calculate max value for percentage
-                  const maxValue = Math.max(totalBuy, totalSell)
-                  const buyPercentage = (totalBuy / maxValue) * 100
-                  const sellPercentage = (totalSell / maxValue) * 100
+                  const maxValue = Math.max(totalBuy, totalSell);
+                  const buyPercentage = (totalBuy / maxValue) * 100;
+                  const sellPercentage = (totalSell / maxValue) * 100;
 
                   return (
                     <div key={stock} className="space-y-2">
@@ -108,7 +157,7 @@ const Overview = ({
                         </div>
                       </div>
                     </div>
-                  )
+                  );
                 })}
               </div>
             ) : (
@@ -120,7 +169,7 @@ const Overview = ({
         </Card>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Overview
+export default Overview;

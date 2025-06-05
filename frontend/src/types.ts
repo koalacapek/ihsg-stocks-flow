@@ -1,7 +1,7 @@
 export interface ITrendProps {
   selectedStocks: string[]
   selectedYear: string
-  chartData: any[]
+  chartData: ChartData[]
 }
 
 export interface IStockChartProps extends ITrendProps {
@@ -19,4 +19,11 @@ export interface IPerformanceCardProps {
 export interface IOwnerShipCardProps {
   selectedStocks: string[]
   filteredData: any[]
+}
+
+export interface ChartData {
+  stock: string,
+  month: string,
+  totalLocal: string,
+  totalForeign: string
 }
