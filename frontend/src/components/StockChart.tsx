@@ -18,6 +18,7 @@ interface StockChartProps {
 
 export function StockChart({ data, selectedStocks }: StockChartProps) {
   const colors = ["#2563eb", "#16a34a", "#dc2626", "#9333ea", "#ea580c"];
+  console.log(data);
 
   return (
     <ResponsiveContainer width="100%" height={350}>
@@ -49,7 +50,7 @@ export function StockChart({ data, selectedStocks }: StockChartProps) {
           tickLine={false}
           axisLine={false}
           tickFormatter={(value) => formatRupiah(value)}
-          domain={["auto", "auto"]}
+          domain={["auto", "auto"]} // ← this allows dynamic min/max
         />
         <Tooltip
           formatter={(value: number) => formatRupiah(value)}

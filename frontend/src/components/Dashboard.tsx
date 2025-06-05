@@ -74,10 +74,6 @@ const Dashboard = () => {
     fetchCodes();
   }, []);
 
-  useEffect(() => {
-    console.log(selectedStocks);
-  }, [selectedStocks]);
-
   // Load data of chosen stocks
   useEffect(() => {
     const fetchTotals = async () => {

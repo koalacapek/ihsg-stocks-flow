@@ -40,23 +40,25 @@ const Overview = ({
           )
         );
 
-        console.log(data);
+        console.log(results);
         const parsed = results.flatMap(({ stock, data }) =>
           data.map((entry: any) => {
-            const month = entry.Date.split("-")[1];
-            const year = entry.Date.split("-")[2];
+            const split = entry.Date.split("-");
+            const day = split[0];
+            const month = split[1];
+            const year = split[2];
             return {
               stock,
-              month: `${year}-${convertMonthAbbrToNumber(month)}`,
-              totalLocal: entry.TotalLocal,
-              totalForeign: entry.TotalForeign,
+              month: `${year}-${convertMonthAbbrToNumber(month)}-${day}`,
+              totalLocal: parseFloat(entry.TotalLocal),
+              totalForeign: parseFloat(entry.TotalForeign),
             };
           })
         );
 
         console.log(parsed);
 
-        setData(parsed); // shape: [{ stock, month, totalLocal, totalForeign }, ...]
+        setData(parsed);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -73,13 +75,13 @@ const Overview = ({
           selectedYear={selectedYear}
           chartData={data}
         />
-        {/* <PerformanceCard
+        <PerformanceCard
           selectedYear={selectedYear}
           topPerformingStocks={chartData.slice(0, 5).map((item) => ({
             stock: item.stock,
-            netFlow: item.netFlow,
+            netFlow: parseFloat(item.totalForeign), // convert to number
           }))}
-        /> */}
+        />
 
         {/* <h2 className="text-2xl font-bold">Overview</h2>
       <p className="text-gray-600">
