@@ -1,11 +1,11 @@
-import { IOwnerShipCardProps } from "@/types"
+import { IOwnerShipCardProps } from "@/types";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card"
+} from "../ui/card";
 
 const OwnershipCard = ({
   filteredData,
@@ -23,15 +23,14 @@ const OwnershipCard = ({
             {selectedStocks.map((stock, index) => {
               // Calculate average ownership for this stock
               const stockData = filteredData.filter(
-                (item) => item.stock_code === stock
-              )
+                (item) => item.code === stock
+              );
               const avgOwnership =
                 stockData.length > 0
-                  ? stockData.reduce(
-                      (sum, item) => sum + (item.foreign_ownership || 0),
-                      0
-                    ) / stockData.length
-                  : 0
+                  ? (stockData[0].totalForeign /
+                      (stockData[0].totalForeign + stockData[0].totalLocal)) *
+                    100
+                  : 0;
 
               // Colors for the bars
               const colors = [
@@ -40,7 +39,7 @@ const OwnershipCard = ({
                 "bg-yellow-500",
                 "bg-purple-500",
                 "bg-gray-500",
-              ]
+              ];
 
               return (
                 <div key={stock} className="space-y-1">
@@ -57,7 +56,7 @@ const OwnershipCard = ({
                     />
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         ) : (
@@ -67,7 +66,7 @@ const OwnershipCard = ({
         )}
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default OwnershipCard
+export default OwnershipCard;

@@ -1,4 +1,4 @@
-import { ITrendProps } from "@/types";
+import { ChartData, ITrendProps } from "@/types";
 import { StockChart } from "../StockChart";
 import {
   Card,
@@ -15,13 +15,13 @@ const TrendCard = ({
   selectedYear,
   chartData,
 }: ITrendProps) => {
-  const [data, setData] = useState<any[]>([]); // Ideally type this properly
+  const [data, setData] = useState<ChartData[]>([]);
 
   useEffect(() => {
     const finalData = aggregateDataForChart(chartData, selectedStocks);
     console.log(finalData);
     setData(finalData);
-  }, [chartData, selectedStocks]); // ← include dependencies
+  }, [chartData, selectedStocks]);
   return (
     <Card className="col-span-4">
       <CardHeader>

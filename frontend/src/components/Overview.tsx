@@ -1,4 +1,4 @@
-import { ChartData, IStockChartProps } from "@/types";
+import { ChartData, IStockChartProps, ITopPerformingStocks } from "@/types";
 import TrendCard from "./Cards/TrendCard";
 import PerformanceCard from "./Cards/PerformanceCard";
 import OwnershipCard from "./Cards/OwnershipCard";
@@ -20,8 +20,10 @@ const Overview = ({
   filteredData,
 }: IStockChartProps) => {
   const [data, setData] = useState<ChartData[]>([]);
+  const [topFive, setTopFive] = useState<ITopPerformingStocks[]>([]);
 
   useEffect(() => {
+    console.log(chartData);
     const fetchData = async () => {
       if (selectedYear === "") return;
 
@@ -41,6 +43,7 @@ const Overview = ({
         );
 
         console.log(results);
+
         const parsed = results.flatMap(({ stock, data }) =>
           data.map((entry: any) => {
             const split = entry.Date.split("-");
@@ -56,9 +59,27 @@ const Overview = ({
           })
         );
 
-        console.log(parsed);
+        const combined = results.map(({ stock, data }) => {
+          const total = data.reduce(
+            (acc: any, item: any) => {
+              acc.totalForeign += Number(item.TotalForeign);
+              return acc;
+            },
+            { totalForeign: 0 }
+          );
+
+          return {
+            stock,
+            netFlow: total.totalForeign,
+          };
+        });
+
+        const topFiveStocks = combined
+          .sort((a, b) => b.netFlow - a.netFlow)
+          .slice(0, 5);
 
         setData(parsed);
+        setTopFive(topFiveStocks);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -77,10 +98,7 @@ const Overview = ({
         />
         <PerformanceCard
           selectedYear={selectedYear}
-          topPerformingStocks={chartData.slice(0, 5).map((item) => ({
-            stock: item.stock,
-            netFlow: parseFloat(item.totalForeign), // convert to number
-          }))}
+          topPerformingStocks={topFive}
         />
 
         {/* <h2 className="text-2xl font-bold">Overview</h2>

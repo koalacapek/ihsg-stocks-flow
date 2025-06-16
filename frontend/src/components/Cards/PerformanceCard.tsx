@@ -1,18 +1,20 @@
-import { IPerformanceCardProps } from "@/types"
+import { IPerformanceCardProps } from "@/types";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card"
+} from "../ui/card";
+import { formatRupiah } from "@/utils/util";
 
 const PerformanceCard = ({
   selectedYear,
   topPerformingStocks,
 }: IPerformanceCardProps) => {
+  console.log(topPerformingStocks);
   return (
-    <Card className="col-span-3">
+    <Card className="col-span-4 md:col-span-3">
       <CardHeader>
         <CardTitle className="text-2xl">Top Performing Stocks</CardTitle>
         <CardDescription>
@@ -29,11 +31,11 @@ const PerformanceCard = ({
               "bg-yellow-500",
               "bg-purple-500",
               "bg-gray-500",
-            ]
+            ];
 
             // Calculate percentage for bar width (relative to highest value)
-            const maxNetFlow = topPerformingStocks[0].netFlow
-            const percentage = (item.netFlow / maxNetFlow) * 100
+            const maxNetFlow = topPerformingStocks[0].netFlow;
+            const percentage = (item.netFlow / maxNetFlow) * 100;
 
             return (
               <div key={item.stock} className="space-y-1">
@@ -45,7 +47,7 @@ const PerformanceCard = ({
                     }
                   >
                     {item.netFlow >= 0 ? "+" : ""}
-                    {item.netFlow.toFixed(1)}B
+                    {formatRupiah(item.netFlow)}
                   </span>
                 </div>
                 <div className="w-full bg-muted rounded-full h-2">
@@ -57,12 +59,12 @@ const PerformanceCard = ({
                   />
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       </CardContent>
     </Card>
-  )
-}
+  );
+};
 
-export default PerformanceCard
+export default PerformanceCard;

@@ -91,6 +91,17 @@ const Dashboard = () => {
             api.get(`/total/${selectedYear}/${stock}`)
           )
         );
+
+        const data = results.map((res) => {
+          const { total_local, total_foreign, ...rest } = res.data;
+          return {
+            totalForeign: total_foreign,
+            totalLocal: total_local,
+            ...rest,
+          };
+        });
+        setFilteredData(data);
+
         const total = results.reduce(
           (acc, res) =>
             acc + res.data["total_local"] + res.data["total_foreign"],
