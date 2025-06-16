@@ -112,10 +112,7 @@ const Overview = ({
           filteredData={filteredData}
         />
 
-        <VolitalityCard
-          filteredData={filteredData}
-          selectedStocks={selectedStocks}
-        />
+        <VolitalityCard data={data} selectedStocks={selectedStocks} />
 
         {/* <Card>
           <CardHeader>

@@ -8,6 +8,11 @@ export interface IStockChartProps extends ITrendProps {
   filteredData: any[]
 }
 
+export interface IVolitalityCardProps {
+  data: ChartData[]
+  selectedStocks: string[]
+}
+
 export interface ITopPerformingStocks {
   stock: string
   netFlow: number
@@ -31,6 +36,6 @@ export interface IOwnerShipCardProps {
 export interface ChartData {
   stock: string,
   month: string,
-  totalLocal: string,
-  totalForeign: string
+  totalLocal: number,
+  totalForeign: number
 }

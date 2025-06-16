@@ -1,4 +1,4 @@
-import { IOwnerShipCardProps } from "@/types";
+import { IVolitalityCardProps } from "@/types";
 import {
   Card,
   CardContent,
@@ -7,10 +7,7 @@ import {
   CardTitle,
 } from "../ui/card";
 
-const VolitalityCard = ({
-  filteredData,
-  selectedStocks,
-}: IOwnerShipCardProps) => {
+const VolitalityCard = ({ data, selectedStocks }: IVolitalityCardProps) => {
   return (
     <Card>
       <CardHeader>
@@ -18,13 +15,11 @@ const VolitalityCard = ({
         <CardDescription>Standard deviation of daily flows</CardDescription>
       </CardHeader>
       <CardContent>
-        {filteredData.length > 0 ? (
+        {data.length > 0 ? (
           <div className="space-y-4">
             {selectedStocks.map((stock, index) => {
               // Calculate volatility (standard deviation) for this stock
-              const stockData = filteredData.filter(
-                (item) => item.code === stock
-              );
+              const stockData = data.filter((item) => item.stock === stock);
               const flows = stockData.map((item) => item.totalForeign || 0);
               const mean =
                 flows.reduce((sum, flow) => sum + flow, 0) / flows.length;
@@ -35,7 +30,7 @@ const VolitalityCard = ({
 
               // Find max volatility for scaling
               const allVolatilities = selectedStocks.map((s) => {
-                const sData = filteredData.filter((item) => item.code === s);
+                const sData = data.filter((item) => item.stock === s);
                 const sFlows = sData.map((item) => item.totalForeign || 0);
                 const sMean =
                   sFlows.reduce((sum, flow) => sum + flow, 0) / sFlows.length;
