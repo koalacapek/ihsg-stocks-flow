@@ -8,6 +8,31 @@ import {
 } from "../ui/card";
 
 const VolitalityCard = ({ data, selectedStocks }: IVolitalityCardProps) => {
+  // Precompute volatilities once for all stocks
+  const volatilities = selectedStocks.map((stock) => {
+    const stockData = data.filter((item) => item.stock === stock);
+    const flows = stockData.map((item) => item.totalForeign ?? 0);
+    const mean = flows.reduce((sum, flow) => sum + flow, 0) / flows.length;
+    const variance =
+      flows.reduce((sum, flow) => sum + Math.pow(flow - mean, 2), 0) /
+      flows.length;
+    return {
+      stock,
+      volatility: Math.sqrt(variance),
+    };
+  });
+
+  const maxVolatility = Math.max(...volatilities.map((v) => v.volatility));
+
+  // Color palette
+  const colors = [
+    "bg-red-400",
+    "bg-orange-400",
+    "bg-yellow-400",
+    "bg-blue-400",
+    "bg-purple-400",
+  ];
+
   return (
     <Card>
       <CardHeader>
@@ -17,48 +42,17 @@ const VolitalityCard = ({ data, selectedStocks }: IVolitalityCardProps) => {
       <CardContent>
         {data.length > 0 ? (
           <div className="space-y-4">
-            {selectedStocks.map((stock, index) => {
-              // Calculate volatility (standard deviation) for this stock
-              const stockData = data.filter((item) => item.stock === stock);
-              const flows = stockData.map((item) => item.totalForeign || 0);
-              const mean =
-                flows.reduce((sum, flow) => sum + flow, 0) / flows.length;
-              const variance =
-                flows.reduce((sum, flow) => sum + Math.pow(flow - mean, 2), 0) /
-                flows.length;
-              const volatility = Math.sqrt(variance);
-
-              // Find max volatility for scaling
-              const allVolatilities = selectedStocks.map((s) => {
-                const sData = data.filter((item) => item.stock === s);
-                const sFlows = sData.map((item) => item.totalForeign || 0);
-                const sMean =
-                  sFlows.reduce((sum, flow) => sum + flow, 0) / sFlows.length;
-                const sVariance =
-                  sFlows.reduce(
-                    (sum, flow) => sum + Math.pow(flow - sMean, 2),
-                    0
-                  ) / sFlows.length;
-                return Math.sqrt(sVariance);
-              });
-              const maxVolatility = Math.max(...allVolatilities);
+            {volatilities.map(({ stock, volatility }, index) => {
               const percentage =
                 maxVolatility > 0 ? (volatility / maxVolatility) * 100 : 0;
-
-              // Colors for the bars
-              const colors = [
-                "bg-red-400",
-                "bg-orange-400",
-                "bg-yellow-400",
-                "bg-blue-400",
-                "bg-purple-400",
-              ];
 
               return (
                 <div key={stock} className="space-y-1">
                   <div className="flex items-center justify-between">
                     <span className="font-medium">{stock}</span>
-                    <span className="text-sm">σ {volatility.toFixed(2)}B</span>
+                    <span className="text-sm">
+                      σ {(volatility / 1_000_000_000).toFixed(2)}B
+                    </span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div
