@@ -18,10 +18,9 @@ const TrendCard = ({
   const [data, setData] = useState<ChartData[]>([]);
 
   useEffect(() => {
-    const finalData = aggregateDataForChart(chartData, selectedStocks);
-    console.log(finalData);
+    const finalData = aggregateDataForChart(chartData);
     setData(finalData);
-  }, [chartData, selectedStocks]);
+  }, [chartData]);
   return (
     <Card className="col-span-4">
       <CardHeader>

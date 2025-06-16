@@ -26,7 +26,13 @@ ChartJS.register(
 import StockSelector from "./StockSelector";
 import YearSelector from "./YearSelector";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { PieChart, TrendingDown, TrendingUp, Users } from "lucide-react";
+import {
+  Activity,
+  PieChart,
+  TrendingDown,
+  TrendingUp,
+  Users,
+} from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import Overview from "./Overview";
 import { api } from "@/utils/api";
@@ -130,22 +136,6 @@ const Dashboard = () => {
     fetchTotals();
   }, [selectedStocks, selectedYear]);
 
-  // const topPerformingStocks = [...availableStocks]
-  //   .map((stock) => {
-  //     const stockData = csvData.filter(
-  //       (item) =>
-  //         item.stock_code === stock &&
-  //         (selectedYear ? item.date.startsWith(selectedYear) : true)
-  //     )
-  //     const netFlow = stockData.reduce(
-  //       (sum, item) => sum + (item.net_flow || 0),
-  //       0
-  //     )
-  //     return { stock, netFlow }
-  //   })
-  //   .sort((a, b) => b.netFlow - a.netFlow)
-  //   .slice(0, 5)
-
   return (
     <div className="p-10">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -199,12 +189,12 @@ const Dashboard = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
-            <CardTitle className="font-medium">Foreign Sell Volume</CardTitle>
-            <TrendingDown className="h-5 w-5 text-red-500" />
+            <CardTitle className="font-medium">Average Monthly Flow</CardTitle>
+            <Activity className="h-5 w-5" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              Rp {(summaryStats.sellVolume / 1000).toFixed(2)}T
+              {formatRupiah((totalForeign / (selectedStocks.length * 12)) | 0)}
             </div>
             <p className="text-xs text-muted-foreground">Total foreign sales</p>
           </CardContent>

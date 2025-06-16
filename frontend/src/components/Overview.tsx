@@ -12,6 +12,7 @@ import {
 import { useEffect, useState } from "react";
 import { api } from "@/utils/api";
 import { convertMonthAbbrToNumber } from "@/utils/util";
+import VolitalityCard from "./Cards/VolitalityCard";
 
 const Overview = ({
   selectedStocks,
@@ -23,7 +24,6 @@ const Overview = ({
   const [topFive, setTopFive] = useState<ITopPerformingStocks[]>([]);
 
   useEffect(() => {
-    console.log(chartData);
     const fetchData = async () => {
       if (selectedYear === "") return;
 
@@ -41,8 +41,6 @@ const Overview = ({
             }))
           )
         );
-
-        console.log(results);
 
         const parsed = results.flatMap(({ stock, data }) =>
           data.map((entry: any) => {
@@ -122,7 +120,12 @@ const Overview = ({
           filteredData={filteredData}
         />
 
-        <Card>
+        <VolitalityCard
+          filteredData={filteredData}
+          selectedStocks={selectedStocks}
+        />
+
+        {/* <Card>
           <CardHeader>
             <CardTitle className="text-2xl">Buy vs Sell Volume</CardTitle>
             <CardDescription>Foreign investment activity</CardDescription>
@@ -186,7 +189,7 @@ const Overview = ({
               </div>
             )}
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   );

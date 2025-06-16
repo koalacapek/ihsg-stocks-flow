@@ -1,0 +1,90 @@
+import { IOwnerShipCardProps } from "@/types";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+
+const VolitalityCard = ({
+  filteredData,
+  selectedStocks,
+}: IOwnerShipCardProps) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Flow Volatility Analysis</CardTitle>
+        <CardDescription>Standard deviation of daily flows</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {filteredData.length > 0 ? (
+          <div className="space-y-4">
+            {selectedStocks.map((stock, index) => {
+              // Calculate volatility (standard deviation) for this stock
+              const stockData = filteredData.filter(
+                (item) => item.code === stock
+              );
+              const flows = stockData.map((item) => item.totalForeign || 0);
+              const mean =
+                flows.reduce((sum, flow) => sum + flow, 0) / flows.length;
+              const variance =
+                flows.reduce((sum, flow) => sum + Math.pow(flow - mean, 2), 0) /
+                flows.length;
+              const volatility = Math.sqrt(variance);
+
+              // Find max volatility for scaling
+              const allVolatilities = selectedStocks.map((s) => {
+                const sData = filteredData.filter((item) => item.code === s);
+                const sFlows = sData.map((item) => item.totalForeign || 0);
+                const sMean =
+                  sFlows.reduce((sum, flow) => sum + flow, 0) / sFlows.length;
+                const sVariance =
+                  sFlows.reduce(
+                    (sum, flow) => sum + Math.pow(flow - sMean, 2),
+                    0
+                  ) / sFlows.length;
+                return Math.sqrt(sVariance);
+              });
+              const maxVolatility = Math.max(...allVolatilities);
+              const percentage =
+                maxVolatility > 0 ? (volatility / maxVolatility) * 100 : 0;
+
+              // Colors for the bars
+              const colors = [
+                "bg-red-400",
+                "bg-orange-400",
+                "bg-yellow-400",
+                "bg-blue-400",
+                "bg-purple-400",
+              ];
+
+              return (
+                <div key={stock} className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{stock}</span>
+                    <span className="text-sm">σ {volatility.toFixed(2)}B</span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2">
+                    <div
+                      className={`${
+                        colors[index % colors.length]
+                      } h-2 rounded-full`}
+                      style={{ width: `${percentage}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="h-[200px] flex items-center justify-center text-muted-foreground">
+            No data available for the selected criteria
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default VolitalityCard;

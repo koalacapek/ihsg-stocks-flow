@@ -2,18 +2,18 @@ import { ChartData } from "@/types";
 
 export const formatRupiah = (value: number): string => {
   if (value >= 1_000_000_000_000) {
-    return `Rp ${(value / 1_000_000_000_000).toFixed(2)}T`; // Triliun
+    return `Rp ${(value / 1_000_000_000_000).toFixed(2)}T`; // Trillion
   } else if (value >= 1_000_000_000) {
-    return `Rp ${(value / 1_000_000_000).toFixed(2)}M`; // Miliar
+    return `Rp ${(value / 1_000_000_000).toFixed(2)}B`; // Billion
   } else if (value >= 1_000_000) {
-    return `Rp ${(value / 1_000_000).toFixed(2)}Jt`; // Juta (optional)
+    return `Rp ${(value / 1_000_000).toFixed(2)}M`; // Million
   } else {
     return `Rp ${value.toLocaleString("id-ID")}`; // Raw format
   }
 };
 
 // Function to aggregate data for chart display
-export const aggregateDataForChart = (data: ChartData[], stocks: string[]): any[] => {
+export const aggregateDataForChart = (data: ChartData[]): any[] => {
   // Group data by date
   const groupedByDate: Record<string, any> = {}
 
