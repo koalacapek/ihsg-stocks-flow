@@ -1,7 +1,7 @@
 export interface ITrendProps {
   selectedStocks: string[]
   selectedYear: string
-  chartData: ChartData[]
+  chartData?: ChartData[]
 }
 
 export interface IStockChartProps extends ITrendProps {

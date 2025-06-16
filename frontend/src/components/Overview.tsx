@@ -2,13 +2,6 @@ import { ChartData, IStockChartProps, ITopPerformingStocks } from "@/types";
 import TrendCard from "./Cards/TrendCard";
 import PerformanceCard from "./Cards/PerformanceCard";
 import OwnershipCard from "./Cards/OwnershipCard";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
 import { useEffect, useState } from "react";
 import { api } from "@/utils/api";
 import { convertMonthAbbrToNumber } from "@/utils/util";
@@ -17,7 +10,6 @@ import VolitalityCard from "./Cards/VolitalityCard";
 const Overview = ({
   selectedStocks,
   selectedYear,
-  chartData,
   filteredData,
 }: IStockChartProps) => {
   const [data, setData] = useState<ChartData[]>([]);

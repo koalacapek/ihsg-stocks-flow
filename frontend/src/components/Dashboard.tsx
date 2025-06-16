@@ -9,9 +9,6 @@ import {
   Legend,
 } from "chart.js";
 import { useEffect, useState } from "react";
-import axios from "axios";
-// import { Line } from "react-chartjs-2";
-// import { loadAndParseTextFileAndFilter } from "../util";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -22,17 +19,10 @@ ChartJS.register(
   Legend
 );
 
-// import data1 from "../../public/data/20240131.txt";
 import StockSelector from "./StockSelector";
 import YearSelector from "./YearSelector";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import {
-  Activity,
-  PieChart,
-  TrendingDown,
-  TrendingUp,
-  Users,
-} from "lucide-react";
+import { Activity, PieChart, TrendingUp, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import Overview from "./Overview";
 import { api } from "@/utils/api";
@@ -50,24 +40,7 @@ const Dashboard = () => {
 
   const availableYears = ["2024", "2025"];
 
-  const [summaryStats, setSummaryStats] = useState({
-    netFlow: 0,
-    buyVolume: 0,
-    sellVolume: 0,
-    foreignOwnership: 0,
-  });
-
-  const [chartData, setChartData] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
-
-  useEffect(() => {
-    setSummaryStats({
-      netFlow: 0,
-      buyVolume: 0,
-      sellVolume: 0,
-      foreignOwnership: 0,
-    });
-  }, []);
 
   // load all available stocks on mount
   useEffect(() => {
@@ -227,7 +200,6 @@ const Dashboard = () => {
           <Overview
             selectedStocks={selectedStocks}
             selectedYear={selectedYear}
-            chartData={chartData}
             filteredData={filteredData}
           />
         </TabsContent>

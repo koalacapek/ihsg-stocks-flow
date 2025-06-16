@@ -1,4 +1,3 @@
-import { ChartData } from "@/types";
 import { formatRupiah } from "@/utils/util";
 import {
   Line,

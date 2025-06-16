@@ -18,9 +18,9 @@ const TrendCard = ({
   const [data, setData] = useState<ChartData[]>([]);
 
   useEffect(() => {
-    const finalData = aggregateDataForChart(chartData);
+    const finalData = aggregateDataForChart(chartData!);
     setData(finalData);
-  }, [chartData]);
+  }, [chartData, selectedStocks]);
   return (
     <Card className="col-span-4">
       <CardHeader>
@@ -30,7 +30,7 @@ const TrendCard = ({
         </CardDescription>
       </CardHeader>
       <CardContent className="pl-2">
-        {chartData.length > 0 ? (
+        {chartData!.length > 0 ? (
           <StockChart data={data} selectedStocks={selectedStocks} />
         ) : (
           <div className="h-[300px] flex items-center justify-center text-muted-foreground">
