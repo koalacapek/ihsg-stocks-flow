@@ -7,8 +7,8 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
-import { useEffect, useState } from "react";
+} from "chart.js"
+import { useEffect, useState } from "react"
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -17,51 +17,50 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend
-);
+)
 
-import StockSelector from "./StockSelector";
-import YearSelector from "./YearSelector";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Activity, PieChart, TrendingUp, Users } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import Overview from "./Overview";
-import { api } from "@/utils/api";
-import { formatRupiah } from "@/utils/util";
+import StockSelector from "./StockSelector"
+import YearSelector from "./YearSelector"
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+import { Activity, PieChart, TrendingUp, Users } from "lucide-react"
+import Overview from "./Overview"
+import { api } from "@/utils/api"
+import { formatRupiah } from "@/utils/util"
 
 const Dashboard = () => {
   // Mock data
-  const [availableStocks, setAvailableStocks] = useState<string[]>([]);
-  const [selectedStocks, setSelectedStocks] = useState<string[]>([]);
-  const [selectedYear, setSelectedYear] = useState<string>("");
-  const [ownership, setOwnership] = useState<number>(0);
+  const [availableStocks, setAvailableStocks] = useState<string[]>([])
+  const [selectedStocks, setSelectedStocks] = useState<string[]>([])
+  const [selectedYear, setSelectedYear] = useState<string>("")
+  const [ownership, setOwnership] = useState<number>(0)
 
-  const [totalNet, setTotalNet] = useState<number>(0);
-  const [totalForeign, setTotalForeign] = useState<number>(0);
+  const [totalNet, setTotalNet] = useState<number>(0)
+  const [totalForeign, setTotalForeign] = useState<number>(0)
 
-  const availableYears = ["2024", "2025"];
+  const availableYears = ["2024", "2025"]
 
-  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [filteredData, setFilteredData] = useState<any[]>([])
 
   // load all available stocks on mount
   useEffect(() => {
     const fetchCodes = () => {
       api.get("/stocks").then((res) => {
-        setAvailableStocks(res.data);
-      });
-    };
+        setAvailableStocks(res.data)
+      })
+    }
 
-    fetchCodes();
-  }, []);
+    fetchCodes()
+  }, [])
 
   // Load data of chosen stocks
   useEffect(() => {
     const fetchTotals = async () => {
-      if (selectedYear === "") return;
+      if (selectedYear === "") return
       if (selectedStocks.length === 0) {
-        setTotalNet(0);
-        setTotalForeign(0);
-        setOwnership(0);
-        return;
+        setTotalNet(0)
+        setTotalForeign(0)
+        setOwnership(0)
+        return
       }
 
       try {
@@ -69,45 +68,45 @@ const Dashboard = () => {
           selectedStocks.map((stock) =>
             api.get(`/total/${selectedYear}/${stock}`)
           )
-        );
+        )
 
         const data = results.map((res) => {
-          const { total_local, total_foreign, ...rest } = res.data;
+          const { total_local, total_foreign, ...rest } = res.data
           return {
             totalForeign: total_foreign,
             totalLocal: total_local,
             ...rest,
-          };
-        });
-        setFilteredData(data);
+          }
+        })
+        setFilteredData(data)
 
         const total = results.reduce(
           (acc, res) =>
             acc + res.data["total_local"] + res.data["total_foreign"],
           0
-        );
+        )
 
         const totalForeign = results.reduce(
           (acc, res) => acc + res.data["total_foreign"],
           0
-        );
+        )
 
         const totalLocal = results.reduce(
           (acc, res) => acc + res.data["total_local"],
           0
-        );
-        setTotalNet(total);
-        setTotalForeign(totalForeign);
+        )
+        setTotalNet(total)
+        setTotalForeign(totalForeign)
 
         // Calculate ownership
-        setOwnership((totalForeign / (totalForeign + totalLocal)) * 100);
+        setOwnership((totalForeign / (totalForeign + totalLocal)) * 100)
       } catch (err) {
-        console.error("Failed to fetch totals", err);
+        console.error("Failed to fetch totals", err)
       }
-    };
+    }
 
-    fetchTotals();
-  }, [selectedStocks, selectedYear]);
+    fetchTotals()
+  }, [selectedStocks, selectedYear])
 
   return (
     <div className="p-10">
@@ -186,26 +185,13 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      <Tabs defaultValue="overview" className="pt-6">
-        <TabsList className="grid grid-cols-2">
-          <TabsTrigger value="overview" className="hover:cursor-pointer">
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="comparison" className="hover:cursor-pointer">
-            Comparison
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview">
-          <Overview
-            selectedStocks={selectedStocks}
-            selectedYear={selectedYear}
-            filteredData={filteredData}
-          />
-        </TabsContent>
-      </Tabs>
+      <Overview
+        selectedStocks={selectedStocks}
+        selectedYear={selectedYear}
+        filteredData={filteredData}
+      />
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard
